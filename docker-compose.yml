@@ -1,0 +1,41 @@
+version: '3'
+
+volumes:
+  logs:
+    driver: local
+
+services:
+  slim:
+    container_name: slim
+    build:
+      context: .
+      dockerfile: docker/slim/Dockerfile
+    working_dir: /var/www
+    command: php -S 0.0.0.0:8080 -t public
+    environment:
+      docker: "true"
+      db_host: 'postgres'
+      db_name: 'app'
+      db_user: 'root'
+      db_pass: 'root'
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app:/var/www
+      - ./app/logs:/var/www/logs
+
+  postgres:
+    container_name: postgres
+    build:
+      context: .
+      dockerfile: docker/postgres/Dockerfile
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - DB_NAME_APP=app
+      - TZ=Europe/Warsaw
+      - PGTZ=Europe/Warsaw
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/create_db.sql:/docker-entrypoint-initdb.d/01-init.sql
