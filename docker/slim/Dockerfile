@@ -14,8 +14,6 @@ RUN chown -R www-data:www-data /var/www
 
 COPY ./app /var/www
 
-RUN chmod 777 /var/www/vendor
-
 WORKDIR /var/www
 USER www-data
 
